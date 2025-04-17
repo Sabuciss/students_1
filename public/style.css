@@ -1,1 +1,80 @@
+/* Base Layout */
+body {
+    background-color: #113f67; /* Deep Tides */
+    color: #e7eaf6; /* Cloud Veil */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2rem;
+}
 
+/* Title and Header */
+h1 {
+    font-size: 2rem;
+    color: #a2a8d3; /* Lavender Fog */
+    border-bottom: 2px solid #38598b; /* Twilight Steel */
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Student List */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    background-color: #38598b; /* Twilight Steel */
+    color: #e7eaf6;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Student Name */
+li span {
+    flex-grow: 1;
+    font-weight: bold;
+}
+
+/* Edit Link */
+a {
+    background-color: #a2a8d3; /* Lavender Fog */
+    color: #113f67;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    margin-right: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+a:hover {
+    background-color: #e7eaf6; /* Cloud Veil */
+    color: #113f67;
+}
+
+/* Delete Button */
+button {
+    background-color: #e7eaf6; /* Cloud Veil */
+    color: #113f67;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #a2a8d3;
+    color: #113f67;
+}
+
+/* Inline Form */
+form {
+    display: inline;
+}
