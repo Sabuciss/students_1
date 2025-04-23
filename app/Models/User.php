@@ -50,10 +50,10 @@ class User extends Authenticatable
 
         // Palīgfunkcijas
 
-        public function setNameAttribute($value)
-        {
-            $this->attributes['name'] = $this->first_name . ' ' . $this->last_name;
-        }
+        // public function setNameAttribute($value)
+        // {
+        //     $this->attributes['name'] = $this->first_name . ' ' . $this->last_name;
+        // }
 
         public function isStudent()
         {

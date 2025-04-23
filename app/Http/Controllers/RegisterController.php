@@ -14,31 +14,38 @@ class RegisterController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:student,teacher',
-        ]);
-    
-        $user = User::create([
-            'name' => $validated['first_name'] . ' ' . $validated['last_name'], 
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'], 
-        ]);
-    
-        Auth::login($user);
-    
-        if ($user->role === 'student') {
-            return redirect()->route('students.index'); 
-        } elseif ($user->role === 'teacher') {
-            return redirect()->route('teachers.dashboard');
-        }
-    
-        return redirect('/');
+{
+    $validated = $request->validate([
+        'first_name' => 'required|string|max:50',
+        'last_name' => 'required|string|max:50',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:8',
+        'role' => 'required|in:student,teacher',
+    ]);
+
+    // Lietotāja izveide
+    $user = User::create([
+        'first_name' => $validated['first_name'],
+        'last_name' => $validated['last_name'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'role' => $validated['role'],
+    ]);
+
+    // Lietotāja pieslēgšana
+    Auth::login($user);
+
+    // Pāradresēšana atkarībā no lomas
+    if ($user->role === 'student') {
+        return redirect()->route('students.index');  // Ja loma ir 'student'
+    } elseif ($user->role === 'teacher') {
+        return redirect()->route('teachers.dashboard');  // Ja loma ir 'teacher'
     }
+
+    return redirect('/');  // Ja kaut kas nav kārtībā
+}
+
+    
+
     
 }
