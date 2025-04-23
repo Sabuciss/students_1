@@ -12,6 +12,7 @@ class CreateStudentsTable extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
+            $table->unsignedBigInteger('user_id'); // ārējā atslēga uz lietotāju
             $table->timestamps();
         });
     }

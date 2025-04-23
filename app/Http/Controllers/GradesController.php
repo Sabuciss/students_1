@@ -12,11 +12,38 @@ class GradesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $grades = Grade::all();
-        return view('grades.index', compact('grades'));
+        $gradesQuery = Grade::with(['student', 'subject']);
+    
+        // Filtrēšana pēc priekšmeta
+        if ($request->filled('subject_id')) {
+            $gradesQuery->where('subject_id', $request->subject_id);
+        }
+    
+        // Filtrēšana pēc skolēna vārda vai uzvārda
+        if ($request->filled('student_id')) {
+            $gradesQuery->where('student_id', $request->student_id);
+        }
+    
+        // Filtrēšana pēc skolēna vārda vai uzvārda, ja ir norādīts meklēšanas lauks
+        if ($request->filled('name')) {
+            $gradesQuery->whereHas('student', function($query) use ($request) {
+                $query->where('first_name', 'like', '%' . $request->name . '%')
+                      ->orWhere('last_name', 'like', '%' . $request->name . '%');
+            });
+        }
+    
+        // Saņem visas atzīmes pēc filtriem
+        $grades = $gradesQuery->get();
+    
+        // Visu skolēnu un priekšmetu saraksti
+        $subjects = Subject::all();
+        $students = Student::all();
+    
+        return view('grades.index', compact('grades', 'students', 'subjects'));
     }
+    
 
     /**
      * Show the form for creating a new resource.

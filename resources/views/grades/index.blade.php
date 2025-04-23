@@ -1,32 +1,44 @@
-<x-layout title="Atzīmes">
-    <h1>Atzīmes</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Skolēns</th>
-                <th>Priekšmets</th>
-                <th>Atzīme</th>
-                <th>Datums</th>
-                <th>Darbības</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($grades as $grade)
-                <tr>
-                    <td>{{ $grade->student->first_name }} {{ $grade->student->last_name }}</td>
-                    <td>{{ $grade->subject->subject_name }}</td>
-                    <td>{{ $grade->grade }}</td>
-                    <td>{{ $grade->date }}</td>
-                    <td>
-                        <a href="{{ route('grades.edit', $grade) }}">Labot</a>
-                        <form action="{{ route('grades.destroy', $grade) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit">Dzēst</button>
-                        </form>
-                    </td>
-                </tr>
+<x-layout title="Skolēnu atzīmes">
+    <h1>Skolēnu atzīmes</h1>
+
+    {{-- Filtrēšanas forma --}}
+    <form method="GET" action="{{ route('grades.index') }}">
+
+        {{-- Skolēnu izvēle --}}
+        <select name="student_id">
+            <option value="">Izvēlieties skolēnu</option>
+            @foreach ($students as $student)
+                <option value="{{ $student->id }}" {{ request('student_id') == $student->id ? 'selected' : '' }}>
+                    {{ $student->first_name }} {{ $student->last_name }}
+                </option>
             @endforeach
-        </tbody>
-    </table>
+        </select>
+
+        {{-- Priekšmeta izvēle --}}
+        <select name="subject_id">
+            <option value="">Izvēlieties priekšmetu</option>
+            @foreach ($subjects as $subject)
+                <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>
+                    {{ $subject->subject_name }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="submit">Filtrēt</button>
+    </form>
+
+    <hr>
+
+    {{-- Atzīmju saraksts --}}
+    @foreach ($grades as $grade)
+        <h3>{{ $grade->student->first_name }} {{ $grade->student->last_name }} - {{ $grade->subject->subject_name }}</h3>
+        <p>Atzīme: {{ $grade->grade }}</p>
+        <a href="{{ route('grades.edit', $grade) }}">Rediģēt</a> | 
+        <form action="{{ route('grades.destroy', $grade) }}" method="POST" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button type="submit">Dzēst</button>
+        </form>
+        <hr>
+    @endforeach
 </x-layout>

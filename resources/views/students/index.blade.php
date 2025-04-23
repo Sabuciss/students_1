@@ -1,5 +1,6 @@
 <x-layout title="Skolēnu saraksts">
     <h1>Skolēni</h1>
+    <a href="{{ route('students.create') }}">+ Pievienot skolēnu</a>
     <ul>
         @foreach ($students as $student)
             <li>

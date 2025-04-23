@@ -18,9 +18,11 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'role', 
     ];
 
     /**
@@ -45,4 +47,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+        // Palīgfunkcijas
+
+        public function setNameAttribute($value)
+        {
+            $this->attributes['name'] = $this->first_name . ' ' . $this->last_name;
+        }
+
+        public function isStudent()
+        {
+            return $this->role === 'student';
+        }
+    
+        public function isTeacher()
+        {
+            return $this->role === 'teacher';
+        }
+        public function student()
+        {
+            return $this->hasOne(Student::class);
+        }
+    
 }

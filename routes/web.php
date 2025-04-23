@@ -4,42 +4,74 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradesController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SessionController;
 
+// =========================
 // Sākumlapa
+// =========================
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// =========================
+// Autentifikācija (Login/Logout/Register)
+// =========================
+
+// Reģistrācija un pieslēgšanās tikai viesiem
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, "create"])->name("register");
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+
+    Route::get('/login', [SessionController::class, "create"])->name("login");
+    Route::post('/login', [SessionController::class, 'store'])->name('login.store');
+});
+
+// Izrakstīšanās
+Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
 // =========================
-// STUDENTS ROUTES
+// STUDENTU ROUTES (Skolotājiem tikai)
 // =========================
-Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
-Route::post('/students', [StudentController::class, 'store'])->name('students.store');
-Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
-Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
-Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
-Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show'); // <- Ja vajag "view" vienam studentam
+Route::middleware(['auth', 'role:teacher'])->group(function () {
+    // Skolēnu pārvaldība (skolotājiem)
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
+});
 
 // =========================
-// SUBJECTS ROUTES
+// PRIEKŠMETU ROUTES (Abiem redzēt, tikai skolotājs rediģē)
 // =========================
-Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
-Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
-Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
-Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('subjects.edit');
-Route::put('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
-Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
-Route::get('/subjects/{subject}', [SubjectController::class, 'show'])->name('subjects.show'); // <- Ja vajag "view" vienam priekšmetam
+Route::middleware('auth')->group(function () {
+    // Skatīt priekšmetus (visiem)
+    Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
+    Route::get('/subjects/{subject}', [SubjectController::class, 'show'])->name('subjects.show');
+});
+
+// Tikai skolotājiem (Rediģēt priekšmetus)
+Route::middleware(['auth', 'role:teacher'])->group(function () {
+    Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
+    Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
+    Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('subjects.edit');
+    Route::put('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
+    Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
+});
 
 // =========================
-// GRADES ROUTES
+// ATZĪMJU ROUTES
 // =========================
-Route::get('/grades', [GradesController::class, 'index'])->name('grades.index');
-Route::get('/grades/create', [GradesController::class, 'create'])->name('grades.create');
-Route::post('/grades', [GradesController::class, 'store'])->name('grades.store');
-Route::get('/grades/{grade}/edit', [GradesController::class, 'edit'])->name('grades.edit');
-Route::put('/grades/{grade}', [GradesController::class, 'update'])->name('grades.update');
-Route::delete('/grades/{grade}', [GradesController::class, 'destroy'])->name('grades.destroy');
-Route::get('/grades/{grade}', [GradesController::class, 'show'])->name('grades.show'); // <- Ja vajag "view" vienai atzīmei
+Route::middleware('auth')->group(function () {
+    // Skatīt atzīmes (abām lomām)
+    Route::get('/grades', [GradesController::class, 'index'])->name('grades.index');
+    Route::get('/grades/{grade}', [GradesController::class, 'show'])->name('grades.show');
+});
+
+// Tikai skolotājiem (Pievienot un rediģēt atzīmes)
+Route::middleware(['auth', 'role:teacher'])->group(function () {
+    Route::get('/grades/create', [GradesController::class, 'create'])->name('grades.create');
+});
