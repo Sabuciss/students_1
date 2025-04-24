@@ -34,7 +34,15 @@ class SessionController extends Controller
                 ]);
             }
         $request->session()->regenerate();
-        return redirect("/");
+        $user = Auth::user();
+
+        if ($user->role === 'teacher') {
+            return redirect()->route('grades.index'); // vai 'students.index' ja vēlies
+        } elseif ($user->role === 'student') {
+            return redirect()->route('grades.index'); // vai cita lapa skolēniem
+        }
+        
+        return redirect('/');
     }
 
    

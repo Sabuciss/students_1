@@ -1,11 +1,13 @@
-<?php
-
+<?php 
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradesController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
+
+
 
 // =========================
 // Sākumlapa
@@ -74,4 +76,8 @@ Route::middleware('auth')->group(function () {
 // Tikai skolotājiem (Pievienot un rediģēt atzīmes)
 Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('/grades/create', [GradesController::class, 'create'])->name('grades.create');
+    Route::post('/grades', [GradesController::class, 'store'])->name('grades.store');
+    Route::get('/grades/{grade}/edit', [GradesController::class, 'edit'])->name('grades.edit');
+    Route::put('/grades/{grade}', [GradesController::class, 'update'])->name('grades.update');
+    Route::delete('/grades/{grade}', [GradesController::class, 'destroy'])->name('grades.destroy');
 });

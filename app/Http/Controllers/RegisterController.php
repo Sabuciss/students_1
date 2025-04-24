@@ -39,7 +39,7 @@ class RegisterController extends Controller
     if ($user->role === 'student') {
         return redirect()->route('students.index');  // Ja loma ir 'student'
     } elseif ($user->role === 'teacher') {
-        return redirect()->route('teachers.dashboard');  // Ja loma ir 'teacher'
+        return redirect()->route('students.index');  // Ja loma ir 'teacher'
     }
 
     return redirect('/');  // Ja kaut kas nav kārtībā
