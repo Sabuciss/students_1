@@ -9,10 +9,14 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     public function index()
-    {
-        $students = Student::all();
-        return view('students.index', compact('students'));
+  {
+    if (!auth()->user()->isTeacher()) {
+        abort(403, 'Pieeja liegta');
     }
+
+    $students = Student::all();
+    return view('students.index', compact('students'));
+}
 
     public function create()
     {

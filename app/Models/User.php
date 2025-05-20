@@ -54,7 +54,10 @@ class User extends Authenticatable
         // {
         //     $this->attributes['name'] = $this->first_name . ' ' . $this->last_name;
         // }
-
+        public function student()
+        {
+            return $this->hasOne(Student::class);
+        }
         public function isStudent()
         {
             return $this->role === 'student';
@@ -64,9 +67,6 @@ class User extends Authenticatable
         {
             return $this->role === 'teacher';
         }
-        public function student()
-        {
-            return $this->hasOne(Student::class);
-        }
+        
     
 }

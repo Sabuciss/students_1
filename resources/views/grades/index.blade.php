@@ -2,8 +2,9 @@
     <h1>Skolēnu atzīmes</h1>
 
     {{-- Filtrēšanas forma --}}
+ @can('isTeacher')
+    {{-- Filtrēšanas forma --}} 
     <form method="GET" action="{{ route('grades.index') }}">
-
         {{-- Skolēnu izvēle --}}
         <select name="student_id">
             <option value="">Izvēlieties skolēnu</option>

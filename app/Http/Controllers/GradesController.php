@@ -9,41 +9,40 @@ use App\Models\Student;
 
 class GradesController extends Controller
 {
+
+    public function __construct()
+            {
+                $this->middleware('auth');
+
+                $this->middleware(function ($request, $next) {
+                    if (!auth()->user()->isTeacher()) {
+                        abort(403, 'Nav piekļuves');
+                    }
+                    return $next($request);
+                })->only(['create', 'store', 'edit', 'update', 'destroy']);
+            }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+        public function index()
     {
-        $gradesQuery = Grade::with(['student', 'subject']);
-    
-        // Filtrēšana pēc priekšmeta
-        if ($request->filled('subject_id')) {
-            $gradesQuery->where('subject_id', $request->subject_id);
+        $user = auth()->user();
+
+        // Ja skolotājs – redz visas atzīmes
+        if ($user->isTeacher()) {
+            $grades = Grade::with(['student', 'subject'])->get();
         }
-    
-        // Filtrēšana pēc skolēna vārda vai uzvārda
-        if ($request->filled('student_id')) {
-            $gradesQuery->where('student_id', $request->student_id);
+        // Ja skolnieks – redz tikai savas atzīmes
+        else {
+            $grades = Grade::with('subject')
+                        ->where('student_id', $user->student_id) // <- Svarīgi!
+                        ->get();
         }
-    
-        // Filtrēšana pēc skolēna vārda vai uzvārda, ja ir norādīts meklēšanas lauks
-        if ($request->filled('name')) {
-            $gradesQuery->whereHas('student', function($query) use ($request) {
-                $query->where('first_name', 'like', '%' . $request->name . '%')
-                      ->orWhere('last_name', 'like', '%' . $request->name . '%');
-            });
-        }
-    
-        // Saņem visas atzīmes pēc filtriem
-        $grades = $gradesQuery->get();
-    
-        // Visu skolēnu un priekšmetu saraksti
-        $subjects = Subject::all();
-        $students = Student::all();
-    
-        return view('grades.index', compact('grades', 'students', 'subjects'));
+
+        return view('grades.index', compact('grades'));
     }
-    
+
 
     /**
      * Show the form for creating a new resource.

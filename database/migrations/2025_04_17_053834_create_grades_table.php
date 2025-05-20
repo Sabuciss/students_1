@@ -8,13 +8,18 @@ class CreateGradesTable extends Migration
 {
     public function up()
     {
-        Schema::create('grades', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');  // Ārējā atslēga uz students tabulu
-            $table->foreignId('subject_id')->constrained()->onDelete('cascade');  // Ārējā atslēga uz subjects tabulu
-            $table->integer('grade');  // Atzīme
-            $table->timestamps();  // Pievieno created_at un updated_at
-        });
+Schema::create('grades', function (Blueprint $table) {
+    $table->id();
+    $table->unsignedBigInteger('student_id');
+    $table->unsignedBigInteger('subject_id');
+    $table->integer('grade');
+    $table->timestamp('graded_at')->useCurrent();
+
+    $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+    $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
+
+    $table->timestamps();
+});
     }
 
     public function down()
